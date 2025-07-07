@@ -1,0 +1,75 @@
+# Arquivos compilados do Python
+*.py[cod]
+_pycache_/
+*.so
+.env
+.env.staging
+.env.prod
+
+# Diretórios virtuais de ambientes
+env/
+venv/
+ENV/
+.venv/
+pip-selfcheck.json
+
+# Arquivos de logs e cache
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.pyo
+
+# Diretórios de configurações IDEs e editores
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Arquivos de testes e coverage
+.coverage
+*.cover
+.hypothesis/
+.tox/
+.nox/
+.pytest_cache/
+nosetests.xml
+test-results.xml
+htmlcov/
+
+# Dados do Jupyter Notebook
+.ipynb_checkpoints/
+profile_default/
+
+# Arquivos de pacotes
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+wheels/
+*.manifest
+.installed.cfg
+
+# Arquivos de distribuição
+*.bak
+*.tmp
+*.old
+*.orig
+
+# Arquivos de controle de sistema e ambientes
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+
+# Configuração do PyCharm
+.idea/
+
+# Arquivos do MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/

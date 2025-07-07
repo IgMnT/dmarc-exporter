@@ -1,0 +1,73 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: dmarc-exporter-cronjob
+spec:
+  schedule: "0 * * * *"
+  timeZone: "America/Sao_Paulo"
+  suspend: true
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: dmarc-exporter
+              image: dmarc-exporter
+              imagePullPolicy: IfNotPresent
+              command:
+                - python
+                - dmarc-exporter.py
+              env:
+                - name: DMARC_MAIL_SERVER
+                  valueFrom:
+                    secretKeyRef:
+                      name: dmarc-exporter-secret
+                      key: DMARC_MAIL_SERVER
+                - name: DMARC_MAIL_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: dmarc-exporter-secret
+                      key: DMARC_MAIL_PASSWORD
+                - name: DMARC_MAIL_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: dmarc-exporter-secret
+                      key: DMARC_MAIL_USER
+                - name: DMARC_MAIL_PORT
+                  valueFrom:
+                    secretKeyRef:
+                      name: dmarc-exporter-secret
+                      key: DMARC_MAIL_PORT
+                - name: PG_HOST
+                  valueFrom:
+                    secretKeyRef:
+                      name: dmarc-exporter-secret
+                      key: PG_HOST
+                - name: PG_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: dmarc-exporter-secret
+                      key: PG_PASSWORD
+                - name: PG_PORT
+                  valueFrom:
+                    secretKeyRef:
+                      name: dmarc-exporter-secret
+                      key: PG_PORT
+                - name: PG_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: dmarc-exporter-secret
+                      key: PG_USER
+                - name: PG_DATABASE
+                  valueFrom:
+                    secretKeyRef:
+                      name: dmarc-exporter-secret
+                      key: PG_DATABASE
+              volumeMounts:
+                - mountPath: /app/dmarc-zip
+                  name: dmarc-volume
+          volumes:
+            - name: dmarc-volume
+              emptyDir:
+                sizeLimit: 100Mi

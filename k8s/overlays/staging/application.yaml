@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: staging-dmarc-exporter
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: git@gitlab.campos.rj.gov.br:infraestrutura/dmarc-exporter.git
+    targetRevision: develop
+    path: k8s/overlays/staging
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: staging-dmarc-exporter
+
+  syncPolicy:
+    syncOptions:
+    - CreateNamespace=true
+    automated:
+      prune: true

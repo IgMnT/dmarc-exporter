@@ -1,0 +1,92 @@
+image: docker:latest
+
+services:
+  - docker:dind
+
+stages:
+  - test
+  - build
+  - release
+  - deploy
+
+build:
+  stage: build
+  image: docker:latest
+  artifacts:
+    expire_in: 1 day
+    paths:
+      - ${CI_PROJECT_NAME}.tar.gz
+  script:
+    - docker build -t ${CI_PROJECT_NAME} .
+  after_script:
+    - docker save ${CI_PROJECT_NAME} | gzip > ${CI_PROJECT_NAME}.tar.gz
+  only:
+    - merge_requests
+    - develop
+    - master
+
+release_image_staging:
+  extends: .release_image
+  environment: staging
+  only:
+    - develop
+
+release_image_production:
+  extends: .release_image
+  environment: production
+  only:
+    - master
+
+.release_image:
+  stage: release
+  image: docker:latest
+  services:
+    - docker:dind
+  dependencies:
+    - build
+  before_script:
+    - docker login -u ${REGISTRY} -p ${DOCKER_TOKEN}
+    - docker load --input ${CI_PROJECT_NAME}.tar.gz
+  script:
+    - docker tag ${CI_PROJECT_NAME} ${REGISTRY}/${CI_PROJECT_NAME}:${IMG_PREFIX_TAG}-${CI_COMMIT_SHORT_SHA}
+    - docker push ${REGISTRY}/${CI_PROJECT_NAME}:${IMG_PREFIX_TAG}-${CI_COMMIT_SHORT_SHA}
+
+deploy_staging:
+  extends: .deploy
+  environment: staging
+  dependencies:
+    - release_image_staging
+  only:
+    - develop
+
+deploy_prod:
+  extends: .deploy
+  environment: production
+  dependencies:
+    - release_image_production
+  only:
+    - master
+
+.deploy:
+  stage: deploy
+  image: ${IMG_ALPINE}
+  before_script:
+    - apk update && apk add --no-cache curl bash git openssh-client
+    - curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"  | bash
+    - mv ./kustomize /usr/local/bin/kustomize
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan gitlab.campos.rj.gov.br >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - git config --global user.email "infrati.cidac@campos.rj.gov.br"
+    - git config --global user.name "Infra CIDAC"
+  script:
+    - cd ${KUSTOMIZE_OVERLAY_PATH}
+    - kustomize edit set image ${CI_PROJECT_NAME}=${REGISTRY}/${CI_PROJECT_NAME}:${IMG_PREFIX_TAG}-${CI_COMMIT_SHORT_SHA}
+    - cat kustomization.yaml
+    - git remote show origin
+    - git remote set-url --push origin git@gitlab.campos.rj.gov.br:$CI_PROJECT_PATH
+    - git commit -am "Gitlab CI applying new docker image tag ${IMG_PREFIX_TAG}-${CI_COMMIT_SHORT_SHA} [skip ci]"
+    - git push --follow-tags origin HEAD:${CI_COMMIT_REF_NAME}
