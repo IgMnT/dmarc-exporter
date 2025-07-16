@@ -1,5 +1,4 @@
 
-
 # 📊 Projeto de Monitoramento DMARC – edu.campos.rj.gov.br
 
 Este projeto tem como objetivo a visualização e análise dos relatórios de conformidade DMARC do domínio **edu.campos.rj.gov.br**, utilizando painéis de Business Intelligence (BI) para oferecer insights claros sobre autenticação de e-mails, segurança e alinhamento com SPF/DKIM.
@@ -24,7 +23,7 @@ Monitorar a integridade dos e-mails enviados em nome do domínio institucional, 
 
 ### 1. Visão Geral da Semana Atual
 
-![Visão Geral da Semana](./caminho_para_imagem_1.png)
+![Visão Geral da Semana](./img1.jpg)
 
 * 145 e-mails reportados.
 * 100% de conformidade DMARC.
@@ -32,15 +31,15 @@ Monitorar a integridade dos e-mails enviados em nome do domínio institucional, 
 
 ### 2. Análise Mensal por Origem
 
-![Mensal por Origem](./caminho_para_imagem_2.png)
+![Mensal por Origem](./img2.jpg)
 
 * 170.555 e-mails analisados.
 * Principais IPs e volumes diários.
 * 99,86% de conformidade DMARC.
 
-### 3. Detalhes por IP (209.85.220.69)
+### 3. Detalhes por IP 
 
-![Detalhes por IP](./caminho_para_imagem_3.png)
+![Detalhes por IP](./img3.jpg)
 
 * IP principal do Google.
 * 139.280 e-mails enviados.
@@ -50,10 +49,10 @@ Monitorar a integridade dos e-mails enviados em nome do domínio institucional, 
 
 ## 🛠️ Tecnologias Utilizadas
 
-* **Ferramenta de BI** (não especificada – pode ser Metabase, Power BI, etc.)
+* Ferramenta de BI(Metabase)
 * Protocolo **DMARC** com suporte a **SPF** e **DKIM**
-* Processamento de relatórios XML agregados (provavelmente via RUA – Aggregate Reports)
-* Scripts para parsing e transformação dos dados (Python, possivelmente)
+* Processamento de relatórios XML agregados 
+* Scripts para parsing e transformação dos dados (Python, Pandas)
 
 ---
 
@@ -70,7 +69,5 @@ Monitorar a integridade dos e-mails enviados em nome do domínio institucional, 
 * Integração com alertas em tempo real para falhas de alinhamento.
 * Automação de parsing e inserção dos dados via pipeline.
 * Expansão para outros domínios institucionais do município.
-
-
 
 

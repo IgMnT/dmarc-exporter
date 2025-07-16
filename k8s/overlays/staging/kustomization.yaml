@@ -15,7 +15,7 @@ commonLabels:
 images:
 - name: dmarc-exporter
   newName: igormagrodmarc/dmarc-exporter
-  newTag: stg-edc3e248
+  newTag: stg-6d4f78d0
 
 patches:
 - patch: |-
