@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: dmarc_exporter
+    environment:
+      - DMARC_MAIL_PASSWORD=${DMARC_MAIL_PASSWORD}
+      - DMARC_MAIL_PORT=${DMARC_MAIL_PORT}
+      - DMARC_MAIL_SERVER=${DMARC_MAIL_SERVER}
+      - DMARC_MAIL_USER=${DMARC_MAIL_USER}
+      - PG_DATABASE=${PG_DATABASE}
+      - PG_HOST=${PG_HOST}
+      - PG_PASSWORD=${PG_PASSWORD}
+      - PG_PORT=${PG_PORT}
+      - PG_USER=${PG_USER}
+    volumes:
+      - dmarc-zip:/app/dmarc-zip
+      - ./src:/app
+    depends_on:
+      - db
+    networks:
+      - app_net
+
+  db:
+    image: postgres:latest
+    container_name: dmarc_db
+    environment:
+      POSTGRES_DB: ${PG_DATABASE}
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    networks:
+      - app_net
+
+volumes:
+  postgres_data:
+  dmarc-zip:
+
+networks:
+  app_net:
